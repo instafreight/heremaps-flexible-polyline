@@ -36,30 +36,35 @@ abstract class FlexiblePolylineTest extends TestCase
         return array_filter(explode("\n", file_get_contents($filepath)));
     }
 
-    protected static function parseLine(string $line): array 
+    protected static function parseLine(string $line): array
     {
         list($rawHeader, $rawPolyline) = explode(';', preg_replace('/[ {}\[\]]/', '', $line));
         list($precision, $thirdDimPrecision, $thirdDim) = array_replace(
-            [0, 0, 0], array_map(
+            [0, 0, 0],
+            array_map(
                 function ($value) {
                     return (int)$value ?: 0;
-                }, explode(',', trim($rawHeader, '()'))
+                },
+                explode(',', trim($rawHeader, '()'))
             )
         );
         $polyline = array_map(
             function ($point) use ($thirdDim) {
                 $coordinates = array_map(
-                    function ($coordinate) { 
+                    function ($coordinate) {
                         return (float)$coordinate ?: null;
-                    }, explode(',', preg_replace('/[()]/', '', $point))
+                    },
+                    explode(',', preg_replace('/[()]/', '', $point))
                 );
                 $values = array_map(
                     function ($coordinate) {
                         return is_null($coordinate) ? 0 : $coordinate;
-                    }, $coordinates
+                    },
+                    $coordinates
                 );
                 return array_slice($values, 0, $thirdDim ? 3 : 2);
-            }, explode('),(', $rawPolyline)
+            },
+            explode('),(', $rawPolyline)
         );
         return compact('precision', 'thirdDim', 'thirdDimPrecision', 'polyline');
     }

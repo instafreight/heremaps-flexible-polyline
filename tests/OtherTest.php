@@ -34,7 +34,10 @@ class OtherTest extends FlexiblePolylineTest
             [50.10201, 8.69567, 20],
             [50.10063, 8.6915, 30],
             [50.09878, 8.68752, 40]
-            ], 5, 2, 0
+            ],
+            5,
+            2,
+            0
         );
 
         $expected = 'BlBoz5xJ67i1BU1B7PUzIhaUxL7YU';
@@ -49,5 +52,4 @@ class OtherTest extends FlexiblePolylineTest
         $this->assertEquals(FlexiblePolyline::getThirdDimension('BlBoz5xJ67i1BU'), FlexiblePolyline::ALTITUDE);
         $this->assertEquals(FlexiblePolyline::getThirdDimension('B1Boz5xJ67i1BU'), FlexiblePolyline::ELEVATION);
     }
-
 }
