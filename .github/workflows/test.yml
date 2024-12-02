@@ -1,0 +1,31 @@
+name: Test
+
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP with composer v2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.0
+          tools: composer:v2
+          extensions: none, mbstring, bcmath
+
+      - name: Install dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.PRIVATE_REPO_PACKAGE_TOKEN }}"}}'
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Code quality
+        run: |
+          composer check-style
+
+      - name: Execute tests
+        run: |
+          composer tests

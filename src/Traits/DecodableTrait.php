@@ -12,7 +12,9 @@ use Exception;
 
 trait DecodableTrait
 {
-   
+    /**
+     * @return array{precision: int, thirdDim: int, thirdDimPrecision: int, polyline: string}
+     */
     public static function decode(string $encoded): array
     {
         $decoded = self::decodeUnsignedValues($encoded);
@@ -29,14 +31,14 @@ trait DecodableTrait
     
         $i = 2;
         for (; $i < count($decoded);) {
-            $deltaLat = self::toSigned($decoded[$i]) / $factorDegree;
-            $deltaLng = self::toSigned($decoded[$i + 1]) / $factorDegree;
-            $lastLat += $deltaLat;
-            $lastLng += $deltaLng;
-    
+            $deltaLat = bcdiv(self::toSigned($decoded[$i]), $factorDegree, 7);
+            $deltaLng = bcdiv(self::toSigned($decoded[$i + 1]), $factorDegree, 7);
+            $lastLat = bcadd($lastLat, $deltaLat, 7);
+            $lastLng = bcadd($lastLng, $deltaLng, 7);
+
             if ($thirdDim) {
                 $deltaZ = self::toSigned($decoded[$i + 2]) / $factorZ;
-                $lastZ += $deltaZ;
+                $lastZ = bcadd($lastZ, $deltaZ, 7);
                 $res[] = [$lastLat, $lastLng, $lastZ];
                 $i += 3;
             } else {
